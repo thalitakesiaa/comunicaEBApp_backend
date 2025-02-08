@@ -37,7 +37,7 @@ const router = express.Router();
  *                     type: string
  *                     format: date-time
  */
-router.get('/users', getUsers); // authenticateToken - para proteger rota
+router.get('/', getUsers); // authenticateToken - para proteger rota
 
 /**
  * @swagger
