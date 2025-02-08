@@ -1,15 +1,24 @@
 const express = require('express');
 const { registerUser, getUsers } = require('../controllers/userController');
 const { userSchema } = require('../validators/userValidator');
-const validate = require('../middleware/validate');
+const validate = require('../middlewares/validate');
+const authenticateToken = require('../middlewares/authMiddleware');
 
 const router = express.Router();
+
+/**
+ * @swagger
+ * tags:
+ *   name: Usuários
+ *   description: Rotas relacionadas aos usuários
+ */
 
 /**
  * @swagger
  * /users:
  *   get:
  *     summary: Lista todos os usuários
+ *     tags: [Usuários]
  *     responses:
  *       200:
  *         description: Lista de usuários
@@ -28,13 +37,14 @@ const router = express.Router();
  *                     type: string
  *                     format: date-time
  */
-router.get('/users', getUsers);
+router.get('/users', getUsers); // authenticateToken - para proteger rota
 
 /**
  * @swagger
  * /register:
  *   post:
  *     summary: Registra um novo usuário
+ *     tags: [Usuários]
  *     requestBody:
  *       required: true
  *       content:
