@@ -7,43 +7,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model user {
   id         Int        @id @default(autoincrement()) @map("user_id")
   email      String     @unique
   password   String
   profile    String     @db.VarChar(32)
-  employee   Employees? @relation("UserEmployee")
-  employeeId Int
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  employee   employees? @relation("user_employee")
+  employee_id Int
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   
 
   @@map("users")
 }
 
-model Employees {
-  id                  Int           @id @default(autoincrement()) @map("employee_id")
+model employees {
+  id                  Int            @id @default(autoincrement()) @map("employee_id")
   name                String
-  email               String        @unique
-  councilRegistration Int
-  workingHours        Int
-  affiliation         String        @db.VarChar(16)
+  email               String         @unique
+  council_registration Int
+  working_hours       Int
+  affiliation         String         @db.VarChar(16)
   location            String
-  groupPositionId     Int
-  groupPosition       GroupPosition @relation(fields: [groupPositionId], references: [id])
-  user                User          @relation("UserEmployee", fields: [userId], references: [id])
-  createdAt           DateTime      @default(now())
-  updatedAt           DateTime      @updatedAt
-  userId              Int           @unique
+  group_position_id   Int
+  group_position      group_position @relation(fields: [group_position_id], references: [id])
+  user_id             Int?            @unique
+  user                user?           @relation("user_employee", fields: [user_id], references: [id])
+  created_at          DateTime       @default(now())
+  updated_at          DateTime       
 
   @@map("employees")
 }
 
-model GroupPosition {
-  id        Int         @id @default(autoincrement()) @map("groupPosition_id")
+model group_position {
+  id        Int         @id @default(autoincrement()) @map("group_position_id")
   position  String
-  employees Employees[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  employees employees[]
+  created_at DateTime    @default(now())
+  updated_at DateTime    
 
-  @@map("groupPosition")
+  @@map("group_positions")
 }
