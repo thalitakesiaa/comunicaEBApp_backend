@@ -5,6 +5,7 @@ const setupSwagger = require('./config/swagger');
 const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
 const groupPositionRoutes = require('./routes/groupPositionRoutes');
+const employeeRoutes = require('./routes/employeeRoutes');
 
 const app = express();
 app.use(cors());
@@ -16,6 +17,7 @@ setupSwagger(app);
 app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/grouppositions', groupPositionRoutes);
+app.use('/api/employees', employeeRoutes);
 
 // Rota principal
 app.get('/', (req, res) => res.send('Comunica-EB API funcionando 🚀'));
