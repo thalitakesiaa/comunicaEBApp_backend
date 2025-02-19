@@ -15,7 +15,7 @@ model user {
   employee   employees? @relation("user_employee")
   employee_id Int
   created_at  DateTime   @default(now())
-  updated_at  DateTime   
+  updated_at  DateTime   @updatedAt
 
   @@map("users")
 }
@@ -33,7 +33,7 @@ model employees {
   user_id             Int?            @unique
   user                user?           @relation("user_employee", fields: [user_id], references: [id])
   created_at          DateTime       @default(now())
-  updated_at          DateTime       
+  updated_at          DateTime       @updatedAt
 
   @@map("employees")
 }
@@ -43,7 +43,42 @@ model group_position {
   position  String
   employees employees[]
   created_at DateTime    @default(now())
-  updated_at DateTime    
+  updated_at DateTime    @updatedAt
 
   @@map("group_positions")
+}
+
+model areas {
+  id          Int         @id @default(autoincrement()) @map("area_id")
+  name        String
+  description String?
+  service_stations service_stations[]
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
+
+  @@map("areas")
+}
+
+model service_stations {
+  id          Int         @id @default(autoincrement()) @map("service_station_id")
+  name        String
+  description String?
+  area_id     Int
+  area        areas        @relation(fields: [area_id], references: [id])
+  assignments assignments[] 
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
+
+  @@map("service_stations")
+}
+
+model assignments {
+  id              Int         @id @default(autoincrement()) @map("assignment_id")
+  exercise_label  String      @db.VarChar(32)
+  service_station_id Int
+  service_station    service_stations @relation(fields: [service_station_id], references: [id])
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+
+  @@map("assignments")
 }
