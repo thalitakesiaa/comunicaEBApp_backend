@@ -13,7 +13,7 @@ const { loginSchema } = require('../validators/authValidator');
 
 /**
  * @swagger
- * /login:
+ * /auth/login:
  *   post:
  *     summary: Realiza o login do usuário
  *     tags: [Autenticação]

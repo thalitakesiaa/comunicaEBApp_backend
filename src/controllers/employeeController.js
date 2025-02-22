@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const groupPositionService = require("../services/groupPositionService");
+const groupPositionService = require("../services/positionService");
 const employeeService = require("../services/employeeService");
 const bcrypt = require('bcrypt');
 

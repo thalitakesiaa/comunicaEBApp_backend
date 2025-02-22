@@ -7,15 +7,15 @@ const createArea = async (name, description) => {
   try {
     console.log('Criando área:', { name, description });
 
-    if (!name || !description) {
-      throw new Error('Nome e descrição são obrigatórios.');
+    if (!name ) {
+      throw new Error('Nome é obrigatório.');
     }
 
     const area = await prisma.areas.create({
       data: { name, description },
     });
 
-    return { data: area };
+    return { area };
   } catch (error) {
     console.error('Erro ao criar área:', error);
 
@@ -32,7 +32,7 @@ const getAllAreas = async () => {
       return null
     }
 
-    return { data: areas };
+    return { areas };
   } catch (error) {
     throw new Error(error.message);
   }
@@ -51,7 +51,7 @@ const getAreaById = async (id) => {
       return null;
     }
 
-    return { data: area };
+    return { area };
   } catch (error) {
     throw new Error( error.message);
   }
@@ -75,7 +75,7 @@ const updateArea = async (id, name, description) => {
       data: { name, description },
     });
 
-    return { data: areaAtualizada };
+    return { areaAtualizada };
   } catch (error) {
     throw new Error(error.message);
   }

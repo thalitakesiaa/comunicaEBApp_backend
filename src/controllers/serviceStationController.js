@@ -80,7 +80,7 @@ const deleteServiceStation = async (req, res) => {
       return res.status(404).json({ message: deletedServiceStation.error });
     }
 
-    return res.status(200).json(deletedServiceStation);
+    return res.status(200).json({ message: "Estação de serviço deletado com sucesso" });
   } catch (error) {
     return res.status(500).json({ message: 'Erro ao deletar posto de serviço.', error: error.message });
   }

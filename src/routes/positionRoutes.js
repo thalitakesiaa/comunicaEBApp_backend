@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const groupPositionController = require('../controllers/groupPositionController');
-const groupPositionValidator = require('../middlewares/groupPositionValidator');
+const positionController = require('../controllers/positionController');
+const positionValidator = require('../validators/positionValidator');
 
 /**
  * @swagger
@@ -12,7 +12,7 @@ const groupPositionValidator = require('../middlewares/groupPositionValidator');
 
 /**
  * @swagger
- * /grouppositions:
+ * /positions:
  *   post:
  *     summary: Cria um novo Group Position
  *     tags: [Cargos]
@@ -22,11 +22,13 @@ const groupPositionValidator = require('../middlewares/groupPositionValidator');
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - position
  *             properties:
- *               position:
- *                 type: string
+ *                name:
+ *                  type: string
+ *                  example: "Enfermeiro"
+ *                service_station_id:
+ *                 type: integer
+ *                 example: 1
  *     responses:
  *       201:
  *         description: Group Position criado com sucesso.
@@ -35,13 +37,13 @@ const groupPositionValidator = require('../middlewares/groupPositionValidator');
  */
 router.post(
  '/',
-  groupPositionValidator.validateCreateGroupPosition,
-  groupPositionController.createGroupPosition
+  positionValidator.validateCreatePosition,
+  positionController.createPosition
 );
 
 /**
  * @swagger
- * /grouppositions:
+ * /positions:
  *   get:
  *     summary: Lista todos os Group Positions
  *     tags: [Cargos]
@@ -68,12 +70,12 @@ router.post(
  */
 router.get(
   '/',
-  groupPositionController.getAllGroupPositions
+  positionController.getAllPositions
 );
 
 /**
  * @swagger
- * /grouppositions/{id}:
+ * /positions/{id}:
  *   get:
  *     summary: Busca um Group Position por ID
  *     tags: [Cargos]
@@ -92,13 +94,13 @@ router.get(
  */
 router.get(
   '/:id',
-  groupPositionValidator.validateGroupPositionId,
-  groupPositionController.getGroupPositionById
+  positionValidator.validatePositionId,
+  positionController.getPositionById
 );
 
 /**
  * @swagger
- * /grouppositions/{id}:
+ * /positions/{id}:
  *   put:
  *     summary: Atualiza um Group Position existente
  *     tags: [Cargos]
@@ -128,13 +130,13 @@ router.get(
  */
 router.put(
   '/:id',
-  groupPositionValidator.validateUpdateGroupPosition,
-  groupPositionController.updateGroupPosition
+  positionValidator.validateUpdatePosition,
+  positionController.updatePosition
 );
 
 /**
  * @swagger
- * /grouppositions/{id}:
+ * /positions/{id}:
  *   delete:
  *     summary: Exclui um Group Position
  *     tags: [Cargos]
@@ -153,8 +155,8 @@ router.put(
  */
 router.delete(
   '/:id',
-  groupPositionValidator.validateGroupPositionId,
-  groupPositionController.deleteGroupPosition
+  positionValidator.validatePositionId,
+  positionController.deletePosition
 );
 
 module.exports = router;

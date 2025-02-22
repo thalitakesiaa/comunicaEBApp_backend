@@ -14,43 +14,51 @@ const validate = (req, res, next) => {
 
 // Verificação de duplicação
 const checkDuplicatePosition = async (position, { req }) => {
-  const existingGroup = await prisma.groupPosition.findFirst({
+  if (!position) {
+    throw new Error('O nome do cargo é obrigatório.');
+  }
+
+  const existingPosition = await prisma.Position.findFirst({
     where: { position },
   });
 
   // Para atualização, ignoramos o próprio registro
-  if (existingGroup && req.method === 'PUT' && existingGroup.id !== parseInt(req.params.id)) {
+  if (existingPosition && req.method === 'PUT' && existingPosition.id !== parseInt(req.params.id)) {
     throw new Error('Já existe um cargo com este nome.');
   }
 
   // Para criação, qualquer duplicação é inválida
-  if (existingGroup && req.method === 'POST') {
+  if (existingPosition && req.method === 'POST') {
     throw new Error('Já existe um cargo com este nome.');
   }
 };
 
+
 // Verificação de existência para exclusão
-const checkGroupPositionExists = async (id) => {
-  const groupPosition = await prisma.groupPosition.findUnique({
+const checkPositionExists = async (id) => {
+  const Position = await prisma.Position.findUnique({
     where: { id: parseInt(id) },
   });
 
-  if (!groupPosition) {
+  if (!Position) {
     throw new Error(`Grupo de cargos com ID ${id} não encontrado. Não é possível deletar.`);
   }
 };
 
-// Validação para criar um novo cargo
-exports.validateCreateGroupPosition = [
-  body('position')
+exports.validateCreatePosition = [
+  body('name')
     .notEmpty().withMessage('O campo "position" é obrigatório.')
-    .isLength({ min: 3 }).withMessage('O campo "position" deve ter pelo menos 3 caracteres.')
-    .custom(checkDuplicatePosition), // Verificação de duplicação
-  validate,
+    .isLength({ min: 3 }).withMessage('O campo "position" deve ter pelo menos 3 caracteres.'),
+  
+  body('service_station_id')
+    .isInt().withMessage('O ID do posto de serviço é obrigatório e deve ser um número inteiro.'),
+
+  validate
 ];
 
+
 // Validação para atualizar um cargo
-exports.validateUpdateGroupPosition = [
+exports.validateUpdatePosition = [
   param('id')
     .isInt({ gt: 0 }).withMessage('O ID deve ser um número inteiro positivo.'),
   body('position')
@@ -61,15 +69,15 @@ exports.validateUpdateGroupPosition = [
 ];
 
 // Validação para deletar um cargo
-exports.validateDeleteGroupPosition = [
+exports.validateDeletePosition = [
   param('id')
     .isInt({ gt: 0 }).withMessage('O ID deve ser um número inteiro positivo.')
-    .custom(checkGroupPositionExists), 
+    .custom(checkPositionExists), 
   validate,
 ];
 
 // Validação para buscar um cargo pelo ID
-exports.validateGroupPositionId = [
+exports.validatePositionId = [
   param('id')
     .isInt({ gt: 0 }).withMessage('O ID deve ser um número inteiro positivo.'),
   validate,
