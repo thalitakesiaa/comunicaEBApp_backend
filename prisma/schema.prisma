@@ -21,31 +21,58 @@ model user {
 }
 
 model employees {
-  id                  Int            @id @default(autoincrement()) @map("employee_id")
-  name                String
-  email               String         @unique
+  id             Int        @id @default(autoincrement()) @map("employee_id")
+  name           String
+  email          String    @unique
   council_registration Int
-  working_hours       Int
-  affiliation         String         @db.VarChar(16)
-  location            String
-  group_position_id   Int
-  group_position      group_position @relation(fields: [group_position_id], references: [id])
-  user_id             Int?            @unique
-  user                user?           @relation("user_employee", fields: [user_id], references: [id])
-  created_at          DateTime       @default(now())
-  updated_at          DateTime       @updatedAt
+  working_hours  Int
+  affiliation    String     @db.VarChar(16)
+  location       String
+  position_id    Int
+  position       position   @relation(fields: [position_id], references: [id])
+  user_id        Int?       @unique
+  user           user?      @relation("user_employee", fields: [user_id], references: [id])
+  created_at     DateTime   @default(now())
+  updated_at     DateTime   @updatedAt
 
   @@map("employees")
 }
 
-model group_position {
-  id        Int         @id @default(autoincrement()) @map("group_position_id")
-  position  String
-  employees employees[]
-  created_at DateTime    @default(now())
-  updated_at DateTime    @updatedAt
+model position {
+  id              Int                 @id @default(autoincrement()) @map("position_id")
+  name            String
+  employees       employees[]
+  service_station service_stations?   @relation(fields: [service_station_id], references: [id])
+  service_station_id Int
+  created_at      DateTime            @default(now())
+  updated_at      DateTime            @updatedAt
 
-  @@map("group_positions")
+  @@map("positions")
+}
+
+model service_stations {
+  id          Int         @id @default(autoincrement()) @map("service_station_id")
+  name        String
+  description String?
+  positions   position[]
+  work_assignments WorkAssignment[] 
+  area_id     Int
+  area        areas       @relation(fields: [area_id], references: [id])
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
+
+  @@map("service_stations")
+}
+
+model WorkAssignment {
+  id              Int         @id @default(autoincrement()) @map("assignment_id")
+  exercise_label  String      @db.VarChar(32)
+  service_station_id Int
+  service_station    service_stations @relation(fields: [service_station_id], references: [id])
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+
+  @@map("work_assignments")
 }
 
 model areas {
@@ -57,28 +84,4 @@ model areas {
   updated_at  DateTime    @updatedAt
 
   @@map("areas")
-}
-
-model service_stations {
-  id          Int         @id @default(autoincrement()) @map("service_station_id")
-  name        String
-  description String?
-  area_id     Int
-  area        areas        @relation(fields: [area_id], references: [id])
-  assignments assignments[] 
-  created_at  DateTime    @default(now())
-  updated_at  DateTime    @updatedAt
-
-  @@map("service_stations")
-}
-
-model assignments {
-  id              Int         @id @default(autoincrement()) @map("assignment_id")
-  exercise_label  String      @db.VarChar(32)
-  service_station_id Int
-  service_station    service_stations @relation(fields: [service_station_id], references: [id])
-  created_at      DateTime    @default(now())
-  updated_at      DateTime    @updatedAt
-
-  @@map("assignments")
 }
