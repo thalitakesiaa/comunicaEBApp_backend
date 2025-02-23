@@ -2,7 +2,9 @@
 
 const { body, param, validationResult } = require('express-validator');
 const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({
+  log: ['query', 'info', 'warn', 'error']
+});
 
 const validateEmail = () => {
   return body('email')
@@ -38,6 +40,8 @@ const validatePassword = () => {
 };
 
 const validateUserId = () => {
+  console.log('validando Usuário...')
+
   return param('id')
     .isInt({ min: 1 })
     .withMessage('O ID do usuário deve ser um número inteiro positivo.')
@@ -49,24 +53,48 @@ const validateUserId = () => {
     });
 };
 
+
 // Verifica se o usuário já existe
 const validateUserEmailExists = async (email) => {
-  const user = await prisma.user.findUnique({ where: { email } });
+  console.log('Validando email do usuário...')
+  const user = await prisma.users.findFirst({
+    where: {
+      email: email.trim().toLowerCase()
+    }
+  });
+    
+  console.log(user);
+  
   if (user) {
     throw new Error('Usuário já existe com este e-mail.');
   }
+  console.log('Validação concluída')
+  return user;
 };
 
-const validateEmployeeAndGetGroupPosition = async (employee_id) => {
+const validateExistingUserById = async (userId) => {
+  const existingUser = await prisma.users.findUnique({
+    where: { user_id: userId },
+  });
+
+  if (existingUser) {
+    throw new Error(`Já existe um usuário associado ao funcionário com ID ${employeeId}.`);
+  }
+};
+
+
+const validateEmployeeAndGetPosition = async (employee_id) => {
+  console.log('Validando funcionário com ID: ', employee_id)
+
   const employee = await prisma.employees.findUnique({
     where: { id: employee_id },
-    include: { group_position: true },
+    include: { position: true },
   });
   if (!employee) {
     throw new Error('Funcionário não encontrado.');
   }
 
-  return employee.group_position;
+  return employee.position;
 };
 
 const handleValidationErrors = (req, res, next) => {
@@ -82,7 +110,8 @@ module.exports = {
   validateEmailNotInUse,
   validatePassword,
   validateUserId,
-  validateUserExists: validateUserEmailExists,
-  validateEmployeeAndGetGroupPosition,
+  validateUserEmailExists,
+  validateEmployeeAndGetPosition,
+  validateExistingUserById,
   handleValidationErrors,
 };

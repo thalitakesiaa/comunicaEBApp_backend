@@ -1,6 +1,6 @@
 const { PrismaClient } = require('@prisma/client');
 const bcrypt = require('bcrypt');
-const { validateEmployeeAndGetGroupPosition } = require('../validators/userValidator');
+const { validateEmployeeAndGetPosition } = require('../validators/userValidator');
 
 const prisma = new PrismaClient();
 
@@ -9,27 +9,52 @@ const getAllUsers = async () => {
 };
 
 const getUserById = async (id) => {
-  return await prisma.user.findUnique({ where: { id: parseInt(id) } });
+  return await prisma.users.findUnique({ where: { id: parseInt(id) } });
 };
 
 const createUser = async (userData) => {
-  const hashedPassword = await bcrypt.hash(userData.password, 10);
+  try {
+    // Verifica se o e-mail já existe
+    const existingUser = await prisma.user.findUnique({
+      where: { email: userData.email },
+    });
 
-  userData.password = hashedPassword;
+    if (existingUser) {
+      throw new Error("E-mail já cadastrado.");
+    }
 
-  const userGroupPosition = await validateEmployeeAndGetGroupPosition(userData.employee_id)
-  console.log(userGroupPosition)
+    // Criptografa a senha, caso não tenha sido fornecida
+    if (!userData.password) {
+      userData.password = await bcrypt.hash("padraoSenhaEb", 10);
+      console.log("Senha criptografada");
+    }
 
-  return await prisma.user.create({
-    data: {
-      email: userData.email, 
-      password: userData.password,
-      profile: userGroupPosition.position,
-      employee_id: userData.employee_id,
-      created_at: userData.created_at,
-      updated_at: userData.update_at
-    },
-  });
+    console.log(userData)
+
+    // Obtém o cargo do funcionário
+    const userPosition = await validateEmployeeAndGetPosition(userData.id);
+
+    if (!userPosition) {
+      throw new Error("Funcionário não encontrado ou sem cargo definido.");
+    }
+
+    console.log('Posição: ', userPosition)
+
+    // Cria o usuário no banco de dados
+    return await prisma.user.create({
+      data: {
+        email: userData.email,
+        password: userData.password,
+        profile: userPosition.name,
+        employee_id: userData.id,
+        created_at: userData.created_at || new Date(),
+        updated_at: userData.updated_at || new Date(),
+      },
+    });
+  } catch (error) {
+    console.error("Erro ao criar usuário:", error);
+    throw new Error(error.message || "Erro interno ao criar usuário.");
+  }
 };
 
 const updateUser = async (id, data) => {
