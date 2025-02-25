@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
+model users {
   id         Int        @id @default(autoincrement()) @map("user_id")
   email      String     @unique
   password   String
@@ -27,18 +27,19 @@ model employees {
   council_registration Int
   working_hours  Int
   affiliation    String     @db.VarChar(16)
-  location       String
+  service_station service_stations?   @relation(fields: [service_station_id], references: [id])
+  service_station_id       Int
   position_id    Int
-  position       position   @relation(fields: [position_id], references: [id])
+  position       positions   @relation(fields: [position_id], references: [id])
   user_id        Int?       @unique
-  user           user?      @relation("user_employee", fields: [user_id], references: [id])
+  user           users?      @relation("user_employee", fields: [user_id], references: [id])
   created_at     DateTime   @default(now())
   updated_at     DateTime   @updatedAt
 
   @@map("employees")
 }
 
-model position {
+model positions {
   id              Int                 @id @default(autoincrement()) @map("position_id")
   name            String
   employees       employees[]
@@ -54,7 +55,8 @@ model service_stations {
   id          Int         @id @default(autoincrement()) @map("service_station_id")
   name        String
   description String?
-  positions   position[]
+  positions   positions[]
+  employee employees[]
   work_assignments WorkAssignment[] 
   area_id     Int
   area        areas       @relation(fields: [area_id], references: [id])

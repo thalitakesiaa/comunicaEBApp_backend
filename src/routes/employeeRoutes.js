@@ -32,20 +32,25 @@ const {
  *             properties:
  *               name:
  *                 type: string
+ *                 example: Marcos santos
  *               email:
  *                 type: string
+ *                 example: marcossantos@gmail.com
  *               council_registration:
  *                 type: integer
+ *                 example: 12345
  *               working_hours:
  *                 type: integer
+ *                 example: 40
  *               affiliation:
  *                 type: string
- *               location:
- *                 type: string
- *               group_position_id:
+ *                 example: EBSERH
+ *               service_station_id:
  *                 type: integer
- *               user_id:
+ *                 example: 1
+ *               position_id:
  *                 type: integer
+ *                 example: 1
  *     responses:
  *       201:
  *         description: Funcionário criado com sucesso
@@ -167,9 +172,9 @@ router.get('/:id', getEmployeeByIdController);
  *                 type: integer
  *               affiliation:
  *                 type: string
- *               location:
- *                 type: string
- *               group_position_id:
+ *               service_station_id:
+ *                 type: integer
+ *               position_id:
  *                 type: integer
  *               user_id:
  *                 type: integer

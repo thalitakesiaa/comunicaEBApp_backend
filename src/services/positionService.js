@@ -43,6 +43,7 @@ const getPositionById = async (id) => {
     if (!id) throw new Error('ID do cargo é obrigatório.');
 
     const position = await prisma.position.findUnique({ where: { id } });
+    console.log('Posição encontrada:', position)
 
     if (!position) {
       throw new Error(`Cargo com ID ${id} não encontrado.`);
