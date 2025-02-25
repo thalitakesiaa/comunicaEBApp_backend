@@ -78,7 +78,7 @@ router.get('/', userController.getUsers);
  *       500:
  *         description: Erro ao buscar usuário
  */
-router.get('/:id', validateUserId, userController.getUserById);
+router.get('/:id', userController.getUserById);
 
 /**
  * @swagger
@@ -145,10 +145,12 @@ router.post(
  *             properties:
  *               email:
  *                 type: string
- *               nome:
+ *               password:
  *                 type: string
  *               employee_id:
  *                 type: integer
+ *               profile:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Usuário atualizado
@@ -169,10 +171,6 @@ router.post(
  *         description: Erro ao atualizar usuário
  */
 router.put('/:id',
-    validateUserId,
-    validateEmail(),
-    validatePassword(),
-    validateEmailNotInUse,
     userController.updateUser
 );
 
@@ -197,6 +195,6 @@ router.put('/:id',
  *       500:
  *         description: Erro ao deletar usuário
  */
-router.delete('/:id', validateUserId, userController.deleteUser);
+router.delete('/:id', userController.deleteUser);
 
 module.exports = router;

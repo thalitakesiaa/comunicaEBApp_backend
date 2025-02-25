@@ -76,6 +76,15 @@ const createEmployeeAndUser = async (employeeData) => {
         throw new Error(`O email ${employeeData.email} já está em uso para algum usuário.`);
       }
 
+      console.log('Verificando registro se já está em uso por usuário')
+      const existingRegister = await tx.employees.findFirst({
+        where: { council_registration: employeeData.council_registration },
+      });
+
+      if (existingRegister) {
+        throw new Error(`O Registro ${employeeData.council_registration} já está em uso para algum usuário.`);
+      }
+
       console.log('Criando Usuário...')
       const newUser = await tx.users.create({
         data: {
@@ -91,14 +100,15 @@ const createEmployeeAndUser = async (employeeData) => {
 
       console.log('Atualizando Funcionario com o usuário criado')
       // Atualizando o funcionário com o ID do usuário criado
-      await tx.employees.update({
+      const updatedEmployee = await tx.employees.update({
         where: { id: newEmployee.id },
         data: { user_id: newUser.id }, // Atualiza o funcionário com o ID do usuário
       });
+      console.log(updatedEmployee)
 
-      console.log('Funcionário criado com sucesso: ', newEmployee, newUser);
+      console.log('Funcionário criado com sucesso: ', updatedEmployee, newUser);
 
-      return { newEmployee, newUser };
+      return { updatedEmployee, newUser };
     } catch (error) {
       console.error("Erro ao criar usuário, desfazendo criação do funcionário:", error);
       throw error; 
